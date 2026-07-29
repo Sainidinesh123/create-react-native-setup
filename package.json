@@ -1,0 +1,39 @@
+{
+  "name": "create-rn-setup",
+  "version": "1.0.0",
+  "description": "Single-command React Native project bootstrapper with compatible package installs and automated setup",
+  "type": "module",
+  "bin": {
+    "create-rn-setup": "./bin/create-rn-setup.js"
+  },
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "catalogs",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "node ./bin/create-rn-setup.js",
+    "test": "node --test test/",
+    "create-rn-setup": "node ./bin/create-rn-setup.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "react-native",
+    "cli",
+    "scaffold",
+    "bootstrap",
+    "create-rn-setup"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cross-spawn": "^7.0.6",
+    "semver": "^7.7.2"
+  }
+}

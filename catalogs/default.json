@@ -1,0 +1,314 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "navigation",
+      "label": "Navigation",
+      "description": "React Navigation native stack and required peers",
+      "default": true,
+      "packages": [
+        "react-navigation",
+        "screens",
+        "safe-area"
+      ]
+    },
+    {
+      "id": "animation",
+      "label": "Animation & Gestures",
+      "description": "Reanimated and Gesture Handler",
+      "default": true,
+      "packages": [
+        "reanimated",
+        "gesture-handler"
+      ]
+    },
+    {
+      "id": "storage",
+      "label": "Storage",
+      "description": "Async Storage",
+      "default": true,
+      "packages": [
+        "async-storage"
+      ]
+    },
+    {
+      "id": "camera",
+      "label": "Camera",
+      "description": "Vision Camera",
+      "default": false,
+      "packages": [
+        "vision-camera"
+      ]
+    },
+    {
+      "id": "state",
+      "label": "State Management",
+      "description": "Redux Toolkit and React Redux",
+      "default": false,
+      "packages": [
+        "redux-toolkit"
+      ]
+    },
+    {
+      "id": "ui",
+      "label": "UI",
+      "description": "SVG and FlashList",
+      "default": false,
+      "packages": [
+        "svg",
+        "flash-list"
+      ]
+    },
+    {
+      "id": "networking",
+      "label": "Networking",
+      "description": "Axios and NetInfo",
+      "default": false,
+      "packages": [
+        "axios",
+        "netinfo"
+      ]
+    },
+    {
+      "id": "maps",
+      "label": "Maps",
+      "description": "React Native Maps",
+      "default": false,
+      "packages": [
+        "maps"
+      ]
+    },
+    {
+      "id": "firebase",
+      "label": "Firebase",
+      "description": "React Native Firebase App",
+      "default": false,
+      "packages": [
+        "firebase-app"
+      ]
+    },
+    {
+      "id": "auth",
+      "label": "Authentication",
+      "description": "Keychain for secure credentials",
+      "default": false,
+      "packages": [
+        "keychain"
+      ]
+    },
+    {
+      "id": "analytics",
+      "label": "Analytics",
+      "description": "Sentry error monitoring",
+      "default": false,
+      "packages": [
+        "sentry"
+      ]
+    }
+  ],
+  "packages": [
+    {
+      "id": "reanimated",
+      "label": "React Native Reanimated",
+      "npm": [
+        "react-native-reanimated"
+      ],
+      "default": true,
+      "setup": [
+        {
+          "type": "babelPlugin",
+          "plugin": "react-native-reanimated/plugin",
+          "position": "last"
+        },
+        {
+          "type": "docs",
+          "url": "https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/getting-started/"
+        }
+      ]
+    },
+    {
+      "id": "gesture-handler",
+      "label": "React Native Gesture Handler",
+      "npm": [
+        "react-native-gesture-handler"
+      ],
+      "default": true,
+      "setup": [
+        {
+          "type": "importInEntry",
+          "import": "react-native-gesture-handler"
+        },
+        {
+          "type": "docs",
+          "url": "https://docs.swmansion.com/react-native-gesture-handler/docs/fundamentals/installation"
+        }
+      ]
+    },
+    {
+      "id": "react-navigation",
+      "label": "React Navigation (native stack)",
+      "npm": [
+        "@react-navigation/native",
+        "@react-navigation/native-stack"
+      ],
+      "peers": [
+        "react-native-screens",
+        "react-native-safe-area-context"
+      ],
+      "default": true,
+      "setup": [
+        {
+          "type": "docs",
+          "url": "https://reactnavigation.org/docs/getting-started"
+        }
+      ]
+    },
+    {
+      "id": "screens",
+      "label": "React Native Screens",
+      "npm": [
+        "react-native-screens"
+      ],
+      "default": true,
+      "setup": []
+    },
+    {
+      "id": "safe-area",
+      "label": "React Native Safe Area Context",
+      "npm": [
+        "react-native-safe-area-context"
+      ],
+      "default": true,
+      "setup": []
+    },
+    {
+      "id": "async-storage",
+      "label": "Async Storage",
+      "npm": [
+        "@react-native-async-storage/async-storage"
+      ],
+      "default": true,
+      "setup": []
+    },
+    {
+      "id": "vision-camera",
+      "label": "Vision Camera",
+      "npm": [
+        "react-native-vision-camera"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "androidPermission",
+          "permission": "android.permission.CAMERA"
+        },
+        {
+          "type": "infoPlist",
+          "key": "NSCameraUsageDescription",
+          "value": "Camera access is required for this app."
+        },
+        {
+          "type": "docs",
+          "url": "https://react-native-vision-camera.com/docs/guides"
+        }
+      ]
+    },
+    {
+      "id": "redux-toolkit",
+      "label": "Redux Toolkit",
+      "npm": [
+        "@reduxjs/toolkit",
+        "react-redux"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "svg",
+      "label": "React Native SVG",
+      "npm": [
+        "react-native-svg"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "flash-list",
+      "label": "Shopify FlashList",
+      "npm": [
+        "@shopify/flash-list"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "axios",
+      "label": "Axios",
+      "npm": [
+        "axios"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "netinfo",
+      "label": "NetInfo",
+      "npm": [
+        "@react-native-community/netinfo"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "maps",
+      "label": "React Native Maps",
+      "npm": [
+        "react-native-maps"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "docs",
+          "url": "https://github.com/react-native-maps/react-native-maps/blob/master/docs/installation.md"
+        }
+      ]
+    },
+    {
+      "id": "firebase-app",
+      "label": "React Native Firebase App",
+      "npm": [
+        "@react-native-firebase/app"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "docs",
+          "url": "https://rnfirebase.io/"
+        }
+      ]
+    },
+    {
+      "id": "keychain",
+      "label": "React Native Keychain",
+      "npm": [
+        "react-native-keychain"
+      ],
+      "default": false,
+      "setup": []
+    },
+    {
+      "id": "sentry",
+      "label": "Sentry React Native",
+      "npm": [
+        "@sentry/react-native"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "docs",
+          "url": "https://docs.sentry.io/platforms/react-native/"
+        }
+      ]
+    }
+  ]
+}
