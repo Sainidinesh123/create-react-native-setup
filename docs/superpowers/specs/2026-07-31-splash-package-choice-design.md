@@ -67,21 +67,10 @@ After project create / resolve / install of **catalog** packages:
 
 1. If splash package is `bootsplash` or `splash-screen`, resolve + install **that single npm package** into the project (compatible version via existing `resolveCompatibleVersion` / `installPackages`).  
 2. Run catalog `runSetupSteps` as today.  
-3. Apply branding:
-   - Icon (unchanged).  
-   - Splash via the selected mode (see below).  
-4. Firebase / notifications remain as already wired (order relative to branding may stay: setup → firebase → notifications → branding, or branding after install of splash package — **splash package install must complete before BootSplash generate / native splash apply**).
+3. Firebase / notifications (unchanged).  
+4. Apply branding (icon + splash mode apply + JS hide when applicable).  
 
-**Concrete order:**
-
-1. Collect all prompts (including splash package + image).  
-2. Create project.  
-3. Resolve + install catalog-selected packages.  
-4. If splash mode needs an npm package, resolve + install **only** that package (append to install report).  
-5. Catalog setup steps.  
-6. Firebase / notifications (unchanged).  
-7. `applyBranding` (icon + splash mode apply + JS hide when applicable).  
-8. Report.
+Splash package install **must** finish before BootSplash generate / package native apply.
 
 Dry-run: no installs, no native writes, no generate CLI; report “would …” for splash package install and each apply step.
 
