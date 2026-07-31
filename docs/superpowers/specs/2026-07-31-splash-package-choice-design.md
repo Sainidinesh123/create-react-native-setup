@@ -24,6 +24,24 @@ When the user opts into a splash screen, the CLI asks which implementation to us
 | `--yes` | Skip splash prompts unless `--splash <image>`; default package = `bootsplash` |
 | Override | `--splash-package bootsplash \| splash-screen \| native` |
 | Icon | Unchanged (native launcher assets only; no splash package coupling) |
+| Visual layout | **Background + centered logo** on every mode (see below) |
+
+## Visual layout (all splash modes)
+
+Splash must look correct on Android and iOS across screen sizes and aspect ratios using this model:
+
+- The **screen is filled** by a solid background color (default `#ffffff`).
+- The user image is treated as a **logo**: scaled to fit within a sensible max size (BootSplash default ~100dp / equivalent on iOS), **centered**, aspect ratio preserved.
+- **Do not** stretch the logo, **do not** crop it, and **do not** use full-bleed cover/centerCrop.
+- Empty space around the logo is intentional and filled by the background color (not an “unwanted” gap).
+
+| Mode | How it is achieved |
+|------|--------------------|
+| `bootsplash` | Official `generate` with `--background=#ffffff` and `--logo-width=100` (library defaults) |
+| `splash-screen` | Layer-list / layout with solid background + centered `ImageView` (`scaleType` fitCenter / centerInside); iOS LaunchScreen image view with aspect-fit + background |
+| `native` | Same as splash-screen assets: background fill + centered aspect-fit image (update `applySplash.js` away from any full-bleed / stretch behavior) |
+
+No CLI flags for background color or logo width in v1 (defaults above). Document in README that a square or near-square logo works best.
 
 ## UX
 
@@ -116,11 +134,11 @@ Each returns setup-like results merged into the report (`packageId: 'branding'`,
 
 ### A. Native assets only (`native`)
 
-Keep current `applySplash.js` behavior:
+Update `applySplash.js` to the **background + centered logo** model (not full-bleed cover/stretch):
 
-- Android density drawables + `windowBackground`  
-- iOS `Splash.imageset` + `LaunchScreen.storyboard`  
-- No npm package, no JS hide  
+- **Android:** solid background (color resource or layer-list) filling the window; centered splash logo drawable with aspect ratio preserved (no `fitXY` stretch).  
+- **iOS:** LaunchScreen / imageset with full-screen background color and a centered, aspect-fit image.  
+- No npm package, no JS hide.
 
 ### B. `react-native-bootsplash`
 
@@ -134,7 +152,7 @@ Keep current `applySplash.js` behavior:
      --logo-width=100
    ```
 
-   Prefer invoking the package’s local bin after install when available. Capture stdout/stderr; on non-zero exit → branding step `failed` with detail; do not abort the whole CLI.  
+   Prefer invoking the package’s local bin after install when available. Capture stdout/stderr; on non-zero exit → branding step `failed` with detail; do not abort the whole CLI. Generator output already implements background + centered logo.  
 3. Ensure Android `MainActivity` calls `RNBootSplash.init(...)` before `super.onCreate` (Kotlin/Java templates); skip if already present.  
 4. Ensure iOS `AppDelegate` initializes BootSplash per current library docs for the RN template in use; skip if already present.  
 5. Pod install remains via existing catalog/pod mechanisms when applicable, or report manualAction if pods were not run.  
@@ -145,9 +163,9 @@ Manual actions only when unsafe to automate (e.g. Xcode storyboard target member
 ### C. `react-native-splash-screen`
 
 1. Install `react-native-splash-screen` only.  
-2. Assets (CLI-owned, `sharp`):
-   - Android: `res/layout/launch_screen.xml` + drawable splash image(s); theme / styles as required by the library docs for current RN.  
-   - iOS: update LaunchScreen / assets similarly to today’s native splash (image visible at launch).  
+2. Assets (CLI-owned, `sharp`) using the same visual model as native/BootSplash:
+   - Android: `launch_screen` layout (or equivalent) with background color + centered logo `ImageView` (aspect-fit); theme/styles per library docs. Generate density-appropriate logo drawables without distorting the source.  
+   - iOS: LaunchScreen with background color + centered aspect-fit image (reuse the native splash layout approach).  
 3. Android: `SplashScreen.show(this)` (or documented Kotlin equivalent) in `MainActivity.onCreate` before `super.onCreate`; idempotent.  
 4. iOS: `RNSplashScreen` show in AppDelegate per docs; idempotent.  
 5. JS: idempotent `SplashScreen.hide()` in App root; do not duplicate if already present.
@@ -186,6 +204,7 @@ Do **not** run BootSplash’s generator for this mode.
 
 - Dark mode / brand image / BootSplash license-key features.  
 - Custom background color / logo-width CLI flags (sensible defaults only; can add later).  
+- Full-bleed cover/stretch splash images.  
 - Expo / config-plugin path.  
 - Changing app icon behavior.  
 - Removing the Analytics/Sentry catalog group (unrelated).
@@ -196,6 +215,7 @@ Do **not** run BootSplash’s generator for this mode.
 - Only the chosen package is installed (or none for native).  
 - `--yes --splash ./logo.png` configures BootSplash end-to-end without prompts.  
 - `--splash-package` overrides the default.  
-- Android + iOS configured; JS `hide()` present for package modes.  
+- Android + iOS use **background + centered logo** (no crop, no stretch; background fills the screen).  
+- JS `hide()` present for package modes.  
 - All branding/splash edits idempotent; existing hide/init not overwritten.  
 - Report lists splash package install + apply steps; dry-run writes nothing.
