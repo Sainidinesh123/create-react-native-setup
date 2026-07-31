@@ -136,8 +136,30 @@ Merged into the final report `setup` array.
 ### JavaScript bootstrap
 
 - Create `src/notifications.js` (or `.ts` if the template is TS — detect `App.tsx` / `tsconfig` and match extension).
-- Add a single top-level import from `index.js` / `index.tsx` (idempotent).
+- **Existing file policy:** if `src/notifications.js` (or `.ts`) already exists, do **not** overwrite it. Return `status: 'skipped'` (or `already-applied`) with a clear detail; optionally set `manualAction` if the existing file may need a hand merge.
+- Add a single top-level import from `index.js` / `index.tsx` only when that import is **absent** (idempotent). Do not rewrite unrelated entry-file content.
 - Module contents depend on which packages were selected (messaging only, notifee only, or both).
+
+## Idempotency (required)
+
+Re-running Firebase/notification setup on the same project must **not** duplicate:
+
+- Google Services Gradle classpath / `apply plugin` lines
+- AndroidManifest permissions, services, or meta-data
+- Info.plist keys / `UIBackgroundModes` entries
+- JS entry imports
+- Generated notification handler registrations inside a file the CLI owns (when the file was created by the CLI)
+
+When an edit is already present, return `already-applied` (or equivalent) and leave the file unchanged.
+
+## Per-platform isolation
+
+Within `applyFirebase` and `applyNotifications`:
+
+- Android copy/Gradle/Manifest failures must **not** skip iOS steps.
+- iOS copy/plist/Xcode failures must **not** skip Android steps.
+- Each platform/step gets its own report entry (`applied` / `failed` / `skipped` / `already-applied`).
+- Overall bootstrap continues after any Firebase/notification step failure.
 
 ## Error handling
 
@@ -146,18 +168,26 @@ Merged into the final report `setup` array.
 | Interactive invalid config path | Re-prompt with error |
 | Flag invalid path | Throw early (before create) |
 | Blank path for one platform | Skip that platform; report note |
-| Missing `android/` or `ios/` | Step `failed`; continue bootstrap |
-| Gradle/plist edit cannot locate anchor | Step `failed` or `manualAction`; continue |
-| Dry-run | `skipped` with “would …” detail; no file writes |
+| Missing `android/` or `ios/` | That platform’s steps `failed`; other platform still runs |
+| Gradle/plist edit cannot locate anchor | Step `failed` or `manualAction`; other steps continue |
+| Existing `src/notifications.js` | Do not overwrite; `skipped` / `already-applied` with detail |
+| Entry import already present | Leave entry file unchanged; `already-applied` |
+| Dry-run | No package install, no file copies/edits; each planned step `skipped` with “would …” |
 | Non-TTY multi-select | Fall back to Yes/No per notification package |
 
 Branding and other setup continue even if Firebase/notification steps fail.
 
-## Manual-only leftovers (always report)
+## Manual-only leftovers (report via `manualAction`)
 
-- Upload APNs key/certificate in Firebase Console.
-- Enable Push Notifications capability in Xcode if automatic entitlement edit is unreliable.
-- Any Firebase Console cloud messaging campaign / server key configuration.
+Always list when messaging/Firebase iOS is in play:
+
+- Upload APNs key/certificate in the Firebase Console.
+- Firebase Console cloud messaging / server configuration that cannot be done from the CLI.
+
+Conditionally list:
+
+- **Xcode target membership** for `GoogleService-Info.plist` — only when the CLI copied the file but could **not** safely edit the `.pbxproj` to add it to the app target.
+- **Push Notifications capability / entitlements** — only when the CLI could not safely add the entitlement; otherwise attempt the edit and report `applied`.
 
 ## Testing
 
@@ -167,9 +197,10 @@ Branding and other setup continue even if Firebase/notification steps fail.
 - Copy destination paths on a fake project tree.
 - Gradle plugin insert idempotency on fixture `build.gradle` / `settings.gradle`.
 - Info.plist background mode idempotency.
-- Bootstrap write + index import idempotency.
+- Bootstrap write + index import idempotency; existing bootstrap file is not overwritten.
 - Auto-add `firebase-app` when messaging selected without Firebase group.
-- Dry-run returns skipped without writing.
+- Android failure does not block iOS steps (and vice versa) in fixture tests.
+- Dry-run returns skipped without writing or installing.
 
 ## Out of scope (v1)
 
