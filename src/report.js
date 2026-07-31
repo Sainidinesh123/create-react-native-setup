@@ -37,7 +37,7 @@ export function formatReport(report) {
   const lines = [];
   lines.push('');
   lines.push('══════════════════════════════════════════════════');
-  lines.push(' create-rn-setup report');
+  lines.push(' create-react-native-setup report');
   lines.push('══════════════════════════════════════════════════');
   lines.push(` Project:      ${report.projectName}`);
   lines.push(` Path:         ${report.projectPath}`);
@@ -99,7 +99,7 @@ export function writeReportFile(report) {
   if (report.dryRun) {
     return null;
   }
-  const out = path.join(report.projectPath, 'create-rn-setup-report.json');
+  const out = path.join(report.projectPath, 'create-react-native-setup-report.json');
   fs.writeFileSync(out, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   return out;
 }

@@ -1,4 +1,11 @@
 import { multiSelect } from './multiSelect.js';
+import { applyMessagingNative } from './applyMessaging.js';
+import { applyNotifeeNative } from './applyNotifee.js';
+import {
+  ensureNotificationsImport,
+  writeNotificationsBootstrap,
+} from './writeBootstrap.js';
+import { APNS_MANUAL_ACTION } from '../firebase/index.js';
 
 export const NOTIFICATION_OPTIONS = [
   {
@@ -67,4 +74,62 @@ export function ensureFirebaseAppSelected(selected, catalog, packageIds = []) {
   return firebaseApp ? [...selected, firebaseApp] : selected;
 }
 
-export { multiSelect };
+/**
+ * Apply native + JS notification setup for the selected packages.
+ * @param {string} projectPath
+ * @param {string} projectName
+ * @param {{ packageIds?: string[], dryRun?: boolean }} options
+ * @returns {Promise<Array<object>>}
+ */
+export async function applyNotifications(projectPath, projectName, options = {}) {
+  const packageIds = options.packageIds || [];
+  const dryRun = Boolean(options.dryRun);
+  const results = [];
+  const hasMessaging = packageIds.includes('firebase-messaging');
+  const hasNotifee = packageIds.includes('notifee');
+
+  if (!hasMessaging && !hasNotifee) {
+    return results;
+  }
+
+  if (hasMessaging) {
+    results.push(...(await applyMessagingNative(projectPath, projectName, { dryRun })));
+  }
+  if (hasNotifee) {
+    results.push(...(await applyNotifeeNative(projectPath, { dryRun })));
+  }
+
+  const bootstrap = await writeNotificationsBootstrap(projectPath, {
+    hasMessaging,
+    hasNotifee,
+    dryRun,
+  });
+  results.push({ packageId: 'notifications', type: 'notificationsBootstrap', ...bootstrap });
+
+  if (bootstrap.modulePath) {
+    const imported = await ensureNotificationsImport(projectPath, bootstrap.modulePath, {
+      dryRun,
+    });
+    results.push({ packageId: 'notifications', type: 'notificationsImport', ...imported });
+  }
+
+  if (hasMessaging) {
+    results.push({
+      packageId: 'firebase-messaging',
+      type: 'messagingManual',
+      status: 'manual',
+      detail: 'Push notifications need credentials that only you can configure',
+      manualAction: APNS_MANUAL_ACTION,
+    });
+  }
+
+  return results;
+}
+
+export {
+  applyMessagingNative,
+  applyNotifeeNative,
+  ensureNotificationsImport,
+  multiSelect,
+  writeNotificationsBootstrap,
+};

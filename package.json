@@ -1,10 +1,10 @@
 {
-  "name": "create-rn-setup",
-  "version": "1.0.0",
-  "description": "Single-command React Native project bootstrapper with compatible package installs and automated setup",
+  "name": "create-react-native-setup",
+  "version": "1.2.0",
+  "description": "Single-command React Native project bootstrapper with compatible package installs, Firebase/notification setup, native app icon and splash screen generation, and automated setup",
   "type": "module",
   "bin": {
-    "create-rn-setup": "./bin/create-rn-setup.js"
+    "create-react-native-setup": "bin/create-react-native-setup.js"
   },
   "main": "./src/index.js",
   "exports": {
@@ -17,9 +17,9 @@
     "README.md"
   ],
   "scripts": {
-    "start": "node ./bin/create-rn-setup.js",
+    "start": "node ./bin/create-react-native-setup.js",
     "test": "node --test test/",
-    "create-rn-setup": "node ./bin/create-rn-setup.js"
+    "create-react-native-setup": "node ./bin/create-react-native-setup.js"
   },
   "engines": {
     "node": ">=18"
@@ -29,11 +29,14 @@
     "cli",
     "scaffold",
     "bootstrap",
-    "create-rn-setup"
+    "app-icon",
+    "splash-screen",
+    "create-react-native-setup"
   ],
   "license": "MIT",
   "dependencies": {
     "cross-spawn": "^7.0.6",
-    "semver": "^7.7.2"
+    "semver": "^7.7.2",
+    "sharp": "^0.35.3"
   }
 }

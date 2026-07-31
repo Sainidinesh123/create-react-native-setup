@@ -38,7 +38,24 @@ function coerceInstalledVersion(value) {
 }
 
 /**
- * Create a React Native project with the latest stable CLI template.
+ * @param {string} name
+ * @param {string} [version] React Native version to pin; latest template when omitted.
+ */
+export function buildInitArgs(name, version) {
+  return [
+    '--yes',
+    '@react-native-community/cli@latest',
+    'init',
+    name,
+    ...(version ? ['--version', version] : []),
+    '--skip-install',
+    '--pm',
+    'npm',
+  ];
+}
+
+/**
+ * Create a React Native project, optionally pinned to `options.version`.
  */
 export async function createReactNativeProject(name, cwd, options = {}) {
   const projectPath = path.join(cwd, name);
@@ -50,7 +67,7 @@ export async function createReactNativeProject(name, cwd, options = {}) {
   }
 
   if (options.dryRun) {
-    const reactNativeVersion = await getRnVersion();
+    const reactNativeVersion = options.version || (await getRnVersion());
     return {
       projectPath,
       reactNativeVersion,
@@ -59,19 +76,7 @@ export async function createReactNativeProject(name, cwd, options = {}) {
     };
   }
 
-  await run(
-    'npx',
-    [
-      '--yes',
-      '@react-native-community/cli@latest',
-      'init',
-      name,
-      '--skip-install',
-      '--pm',
-      'npm',
-    ],
-    { cwd },
-  );
+  await run('npx', buildInitArgs(name, options.version), { cwd });
 
   await run('npm', ['install'], { cwd: projectPath });
 
