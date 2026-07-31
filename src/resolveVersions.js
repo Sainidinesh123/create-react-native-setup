@@ -247,7 +247,11 @@ export async function resolveSelectedPackages(selectedPackages, context, deps = 
       enqueue({ name, from: entry.id });
     }
     for (const peer of entry.peers || []) {
-      enqueue({ name: peer, from: `${entry.id}:peer` });
+      if (typeof peer === 'string') {
+        enqueue({ name: peer, from: `${entry.id}:peer` });
+      } else if (peer?.name) {
+        enqueue({ name: peer.name, from: `${entry.id}:peer`, range: peer.range });
+      }
     }
   }
 

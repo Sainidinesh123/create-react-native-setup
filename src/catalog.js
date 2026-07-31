@@ -65,6 +65,19 @@ export function validateCatalog(raw, source = 'catalog') {
     if (pkg.peers && !Array.isArray(pkg.peers)) {
       throw new Error(`${source}: package "${pkg.id}" peers must be an array`);
     }
+    for (const peer of pkg.peers || []) {
+      if (typeof peer === 'string') {
+        if (!peer) {
+          throw new Error(`${source}: package "${pkg.id}" has an empty peer name`);
+        }
+        continue;
+      }
+      if (!peer || typeof peer !== 'object' || typeof peer.name !== 'string' || !peer.name) {
+        throw new Error(
+          `${source}: package "${pkg.id}" peers must be package name strings or { name, range? } objects`,
+        );
+      }
+    }
     if (pkg.setup && !Array.isArray(pkg.setup)) {
       throw new Error(`${source}: package "${pkg.id}" setup must be an array`);
     }
@@ -76,7 +89,9 @@ export function validateCatalog(raw, source = 'catalog') {
     packageById.set(pkg.id, {
       ...pkg,
       default: Boolean(pkg.default),
-      peers: pkg.peers || [],
+      peers: (pkg.peers || []).map((peer) =>
+        typeof peer === 'string' ? peer : { name: peer.name, range: peer.range },
+      ),
       setup: pkg.setup || [],
     });
   }

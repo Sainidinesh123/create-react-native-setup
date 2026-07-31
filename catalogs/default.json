@@ -206,6 +206,10 @@
       "npm": [
         "react-native-vision-camera"
       ],
+      "peers": [
+        { "name": "react-native-nitro-modules", "range": "^0.36.4" },
+        { "name": "react-native-nitro-image", "range": "^0.15.1" }
+      ],
       "default": false,
       "setup": [
         {

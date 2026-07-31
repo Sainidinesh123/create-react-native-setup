@@ -131,6 +131,55 @@ test('resolveSelectedPackages: installs a required peer such as react-native-wor
   assert.match(worklets.reason, /peer of react-native-reanimated/);
 });
 
+test('resolveSelectedPackages: vision-camera installs required nitro peers', async () => {
+  const { resolved, skipped } = await resolveSelectedPackages(
+    [
+      {
+        id: 'vision-camera',
+        npm: ['react-native-vision-camera'],
+        peers: [
+          { name: 'react-native-nitro-modules', range: '^0.36.4' },
+          { name: 'react-native-nitro-image', range: '^0.15.1' },
+        ],
+      },
+    ],
+    { reactNative: '0.86.2', react: '19.0.0' },
+    {
+      fetchVersions: async (name) => {
+        if (name === 'react-native-vision-camera') return ['4.7.0'];
+        if (name === 'react-native-nitro-modules') return ['0.30.0', '0.36.4', '0.37.0'];
+        if (name === 'react-native-nitro-image') return ['0.10.0', '0.15.1', '0.16.0'];
+        return ['1.0.0'];
+      },
+      fetchPeers: async () => ({}),
+      fetchPeerMeta: async () => new Set(),
+      fetchLatest: noLatest,
+    },
+  );
+
+  assert.equal(skipped.length, 0);
+  assert.deepEqual(
+    resolved.map((item) => item.name).sort(),
+    [
+      'react-native-nitro-image',
+      'react-native-nitro-modules',
+      'react-native-vision-camera',
+    ],
+  );
+  assert.equal(
+    resolved.find((item) => item.name === 'react-native-nitro-modules').version,
+    '0.36.4',
+  );
+  assert.equal(
+    resolved.find((item) => item.name === 'react-native-nitro-image').version,
+    '0.15.1',
+  );
+  assert.equal(
+    resolved.some((item) => item.name === '@sentry/react-native'),
+    false,
+  );
+});
+
 test('resolveSelectedPackages: ignores template-provided and optional peers', async () => {
   const { resolved } = await resolveSelectedPackages(
     [{ id: 'demo', npm: ['demo-pkg'], peers: [] }],
