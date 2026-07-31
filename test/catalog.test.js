@@ -10,6 +10,16 @@ test('loadCatalog: default catalog validates', () => {
   assert.ok(catalog.packageById.get('reanimated'));
 });
 
+test('loadCatalog: includes the notifications group and packages', () => {
+  const catalog = loadCatalog();
+  assert.ok(catalog.groups.some((g) => g.id === 'notifications'));
+  assert.equal(
+    catalog.packageById.get('firebase-messaging').npm[0],
+    '@react-native-firebase/messaging',
+  );
+  assert.equal(catalog.packageById.get('notifee').npm[0], '@notifee/react-native');
+});
+
 test('validateCatalog: rejects unknown group package refs', () => {
   assert.throws(
     () =>

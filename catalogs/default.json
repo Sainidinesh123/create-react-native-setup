@@ -88,6 +88,16 @@
       ]
     },
     {
+      "id": "notifications",
+      "label": "Notifications",
+      "description": "Firebase Cloud Messaging and Notifee",
+      "default": false,
+      "packages": [
+        "firebase-messaging",
+        "notifee"
+      ]
+    },
+    {
       "id": "auth",
       "label": "Authentication",
       "description": "Keychain for secure credentials",
@@ -284,6 +294,44 @@
         {
           "type": "docs",
           "url": "https://rnfirebase.io/"
+        }
+      ]
+    },
+    {
+      "id": "firebase-messaging",
+      "label": "@react-native-firebase/messaging",
+      "npm": [
+        "@react-native-firebase/messaging"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "androidPermission",
+          "permission": "android.permission.POST_NOTIFICATIONS"
+        },
+        {
+          "type": "docs",
+          "url": "https://rnfirebase.io/messaging/usage"
+        },
+        {
+          "type": "podInstall"
+        }
+      ]
+    },
+    {
+      "id": "notifee",
+      "label": "@notifee/react-native",
+      "npm": [
+        "@notifee/react-native"
+      ],
+      "default": false,
+      "setup": [
+        {
+          "type": "docs",
+          "url": "https://notifee.app/react-native/docs/overview"
+        },
+        {
+          "type": "podInstall"
         }
       ]
     },

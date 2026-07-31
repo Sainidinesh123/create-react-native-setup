@@ -45,3 +45,60 @@ test('parseArgs: combined flags', () => {
   assert.equal(result.dryRun, true);
   assert.equal(result.configPath, 'x.json');
 });
+
+test('parseArgs: --rn-version', () => {
+  assert.equal(parseArgs(['--rn-version', '0.81.0']).rnVersion, '0.81.0');
+  assert.equal(parseArgs(['--rn-version=0.81.0']).rnVersion, '0.81.0');
+});
+
+test('parseArgs: --rn-version without value throws', () => {
+  assert.throws(() => parseArgs(['--rn-version']), /requires a version/);
+});
+
+test('parseArgs: --icon and --splash paths', () => {
+  const result = parseArgs(['MyApp', '--icon', './icon.png', '--splash', './splash.png']);
+  assert.equal(result.iconPath, './icon.png');
+  assert.equal(result.splashPath, './splash.png');
+});
+
+test('parseArgs: --icon= and --splash= forms', () => {
+  const result = parseArgs(['--icon=./a.png', '--splash=./b.png']);
+  assert.equal(result.iconPath, './a.png');
+  assert.equal(result.splashPath, './b.png');
+});
+
+test('parseArgs: Firebase config flags', () => {
+  const result = parseArgs([
+    'App',
+    '--google-services',
+    './google-services.json',
+    '--google-service-info',
+    './GoogleService-Info.plist',
+  ]);
+  assert.equal(result.googleServicesPath, './google-services.json');
+  assert.equal(result.googleServiceInfoPath, './GoogleService-Info.plist');
+});
+
+test('parseArgs: --notifications parses ids', () => {
+  assert.deepEqual(parseArgs(['--notifications', 'messaging,notifee']).notificationIds, [
+    'messaging',
+    'notifee',
+  ]);
+  assert.deepEqual(parseArgs(['--notifications=messaging']).notificationIds, ['messaging']);
+});
+
+test('parseArgs: --notifications rejects unknown ids', () => {
+  assert.throws(() => parseArgs(['--notifications', 'onesignal']), /unknown id/i);
+});
+
+test('parseArgs: --notifications without value throws', () => {
+  assert.throws(() => parseArgs(['--notifications']), /comma-separated/i);
+});
+
+test('parseArgs: --icon without path throws', () => {
+  assert.throws(() => parseArgs(['--icon']), /requires a file path/);
+});
+
+test('parseArgs: --splash without path throws', () => {
+  assert.throws(() => parseArgs(['--splash']), /requires a file path/);
+});
