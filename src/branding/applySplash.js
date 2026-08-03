@@ -27,9 +27,10 @@ const SPLASH_BACKGROUND = '#ffffff';
 /**
  * Configure a native splash screen from `splashPath` — no runtime dependency is added.
  * Android uses a layer-list windowBackground; iOS uses a generated LaunchScreen storyboard.
+ * Logo is centered on a solid background (no crop / stretch).
  * @param {string} projectPath
  * @param {string} splashPath
- * @param {{ dryRun?: boolean }} [options]
+ * @param {{ dryRun?: boolean, background?: string }} [options]
  */
 export async function applySplash(projectPath, splashPath, options = {}) {
   if (options.dryRun) {
@@ -39,6 +40,7 @@ export async function applySplash(projectPath, splashPath, options = {}) {
     };
   }
 
+  const background = options.background || SPLASH_BACKGROUND;
   const resDir = findAndroidResDir(projectPath);
   const assetCatalog = findAssetCatalog(projectPath);
 
@@ -52,7 +54,7 @@ export async function applySplash(projectPath, splashPath, options = {}) {
   const applied = [];
   try {
     if (resDir) {
-      await writeAndroidSplash(resDir, splashPath);
+      await writeAndroidSplash(resDir, splashPath, background);
       applied.push('Android drawables');
       const stylesPath = findAndroidStyles(projectPath);
       if (stylesPath && addWindowBackground(stylesPath)) {
@@ -60,11 +62,11 @@ export async function applySplash(projectPath, splashPath, options = {}) {
       }
     }
     if (assetCatalog) {
-      await writeIosSplash(assetCatalog, splashPath);
+      await writeIosSplash(assetCatalog, splashPath, background);
       applied.push('iOS Splash.imageset');
       const launchScreen = findLaunchScreen(projectPath);
       if (launchScreen) {
-        fs.writeFileSync(launchScreen, splashStoryboard(), 'utf8');
+        fs.writeFileSync(launchScreen, splashStoryboard(background), 'utf8');
         applied.push('LaunchScreen.storyboard');
       }
     }
@@ -78,13 +80,13 @@ export async function applySplash(projectPath, splashPath, options = {}) {
   };
 }
 
-async function writeAndroidSplash(resDir, splashPath) {
+async function writeAndroidSplash(resDir, splashPath, background = SPLASH_BACKGROUND) {
   for (const [folder, size] of Object.entries(ANDROID_SPLASH_SIZES)) {
     const dir = path.join(resDir, folder);
     fs.mkdirSync(dir, { recursive: true });
     await sharp(splashPath)
-      .resize(size, size, { fit: 'contain', background: SPLASH_BACKGROUND })
-      .flatten({ background: SPLASH_BACKGROUND })
+      .resize(size, size, { fit: 'contain', background })
+      .flatten({ background })
       .png()
       .toFile(path.join(dir, 'splash_image.png'));
   }
@@ -95,7 +97,11 @@ async function writeAndroidSplash(resDir, splashPath) {
     path.join(drawableDir, 'splash.xml'),
     `<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/white" />
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="${background}" />
+        </shape>
+    </item>
     <item>
         <bitmap
             android:src="@drawable/splash_image"
@@ -126,14 +132,14 @@ function addWindowBackground(stylesPath) {
   return true;
 }
 
-async function writeIosSplash(assetCatalog, splashPath) {
+async function writeIosSplash(assetCatalog, splashPath, background = SPLASH_BACKGROUND) {
   const imageSet = path.join(assetCatalog, 'Splash.imageset');
   fs.mkdirSync(imageSet, { recursive: true });
 
   for (const { suffix, size } of IOS_SPLASH_SCALES) {
     await sharp(splashPath)
-      .resize(size, size, { fit: 'contain', background: SPLASH_BACKGROUND })
-      .flatten({ background: SPLASH_BACKGROUND })
+      .resize(size, size, { fit: 'contain', background })
+      .flatten({ background })
       .png()
       .toFile(path.join(imageSet, `splash${suffix}.png`));
   }
@@ -153,8 +159,11 @@ async function writeIosSplash(assetCatalog, splashPath) {
   );
 }
 
-/** Square image keeps the 1:1 constraint unambiguous, so the launch screen never mis-lays out. */
-function splashStoryboard() {
+/** Centered logo on solid background — aspect-fit, no crop/stretch. */
+function splashStoryboard(background = SPLASH_BACKGROUND) {
+  const red = parseInt(background.slice(1, 3), 16) / 255;
+  const green = parseInt(background.slice(3, 5), 16) / 255;
+  const blue = parseInt(background.slice(5, 7), 16) / 255;
   return `<?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
@@ -177,7 +186,7 @@ function splashStoryboard() {
                                 <rect key="frame" x="93.5" y="239.5" width="188" height="188"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="${red}" green="${green}" blue="${blue}" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="SPL-as-h01" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="SPL-cx-001"/>
                             <constraint firstItem="SPL-as-h01" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="SPL-cy-002"/>

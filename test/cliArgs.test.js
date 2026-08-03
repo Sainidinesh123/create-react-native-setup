@@ -95,6 +95,16 @@ test('parseArgs: --notifications without value throws', () => {
   assert.throws(() => parseArgs(['--notifications']), /comma-separated/i);
 });
 
+test('parseArgs: --splash-package values', () => {
+  assert.equal(parseArgs(['--splash-package', 'bootsplash']).splashPackage, 'bootsplash');
+  assert.equal(parseArgs(['--splash-package=splash-screen']).splashPackage, 'splash-screen');
+  assert.equal(parseArgs(['--splash-package', 'native']).splashPackage, 'native');
+});
+
+test('parseArgs: --splash-package rejects unknown ids', () => {
+  assert.throws(() => parseArgs(['--splash-package', 'expo']), /unknown id/i);
+});
+
 test('parseArgs: --icon without path throws', () => {
   assert.throws(() => parseArgs(['--icon']), /requires a file path/);
 });

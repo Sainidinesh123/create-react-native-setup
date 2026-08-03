@@ -6,6 +6,7 @@ import {
   defaultFetchLatest,
   getLatestReactNativeVersion,
 } from './resolveVersions.js';
+import { promptLabel, color } from './colors.js';
 
 /**
  * All prompts share one readline interface and a line queue.
@@ -70,7 +71,9 @@ function nextLine() {
  */
 export async function askText(question) {
   promptInterface();
-  output.write(question);
+  const colored =
+    question.includes('\u001b[') || !output.isTTY ? question : promptLabel(question);
+  output.write(colored);
   const line = await nextLine();
   if (line === undefined) {
     throw new Error('Input ended before the prompt was answered');
@@ -100,12 +103,14 @@ export async function askProjectName(initial) {
     return initial;
   }
   while (true) {
-    const name = await askText('Project name: ');
+    const name = await askText('What is your project name? ');
     if (isValidProjectName(name)) {
       return name;
     }
     console.log(
-      'Invalid name. Use letters, numbers, underscore, or hyphen; must start with a letter.',
+      color.yellow(
+        'Invalid name. Use letters, numbers, underscore, or hyphen; must start with a letter.',
+      ),
     );
   }
 }

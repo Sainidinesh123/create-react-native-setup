@@ -5,7 +5,16 @@
 const VALUE_FLAGS = [
   { flag: '--config', key: 'configPath', requires: 'requires a file path' },
   { flag: '--icon', key: 'iconPath', requires: 'requires a file path' },
-  { flag: '--splash', key: 'splashPath', requires: 'requires a file path' },
+  {
+    flag: '--splash',
+    key: 'splashPath',
+    requires: 'requires a file path',
+  },
+  {
+    flag: '--splash-package',
+    key: 'splashPackage',
+    requires: 'requires bootsplash, splash-screen, or native',
+  },
   {
     flag: '--rn-version',
     key: 'rnVersion',
@@ -102,6 +111,17 @@ export function parseArgs(argv = []) {
     delete result.notificationsRaw;
   }
 
+  if (result.splashPackage !== undefined) {
+    const allowed = new Set(['bootsplash', 'splash-screen', 'native']);
+    const id = String(result.splashPackage).trim().toLowerCase();
+    if (!allowed.has(id)) {
+      throw new Error(
+        `--splash-package unknown id "${result.splashPackage}" (expected: bootsplash, splash-screen, native)`,
+      );
+    }
+    result.splashPackage = id;
+  }
+
   return result;
 }
 
@@ -118,6 +138,8 @@ Options:
   --rn-version <ver>     React Native version to create (default: latest)
   --icon <file>          Image for the native app icon (.png/.jpg/.jpeg/.webp)
   --splash <file>        Image for the native splash screen (.png/.jpg/.jpeg/.webp)
+  --splash-package <id>  Splash implementation: bootsplash | splash-screen | native
+                         (default bootsplash when --yes --splash is used)
   --google-services <f>  google-services.json for Android Firebase
   --google-service-info <f>
                          GoogleService-Info.plist for iOS Firebase
@@ -127,8 +149,8 @@ Options:
   --help, -h             Show this help
 
 Interactive prompts (skipped by --yes or when the matching flag is passed):
-  project name → React Native version → package groups → notification packages
-  → Firebase config files → app icon → splash screen
+  project name → app icon path → splash path → React Native version → package groups
+  → notification packages → Firebase config files
 
 Examples:
   npx create-react-native-setup

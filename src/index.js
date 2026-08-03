@@ -17,7 +17,11 @@ export async function main(argv = process.argv.slice(2)) {
     console.warn(`Warning: ignoring unknown arguments: ${args.unknown.join(', ')}`);
   }
 
-  assertBrandingFlagPaths({ iconPath: args.iconPath, splashPath: args.splashPath });
+  assertBrandingFlagPaths({
+    iconPath: args.iconPath,
+    splashPath: args.splashPath,
+    splashPackage: args.splashPackage,
+  });
   assertFirebaseFlagPaths({
     googleServicesPath: args.googleServicesPath,
     googleServiceInfoPath: args.googleServiceInfoPath,
@@ -31,6 +35,7 @@ export async function main(argv = process.argv.slice(2)) {
     rnVersion: args.rnVersion,
     iconPath: args.iconPath,
     splashPath: args.splashPath,
+    splashPackage: args.splashPackage,
     googleServicesPath: args.googleServicesPath,
     googleServiceInfoPath: args.googleServiceInfoPath,
     notificationIds: args.notificationIds,

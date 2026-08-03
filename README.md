@@ -56,6 +56,7 @@ npx create-react-native-setup [projectName] [options]
 | `--rn-version <ver>` | React Native version to create (default: latest stable) |
 | `--icon <file>` | Image used to generate native app icons |
 | `--splash <file>` | Image used to generate the native splash screen |
+| `--splash-package <id>` | Splash implementation: `bootsplash`, `splash-screen`, or `native` (default `bootsplash` with `--yes --splash`) |
 | `--google-services <file>` | `google-services.json` for Android Firebase |
 | `--google-service-info <file>` | `GoogleService-Info.plist` for iOS Firebase |
 | `--notifications <list>` | Notification packages: `messaging`, `notifee` (or `none`) |
@@ -69,7 +70,7 @@ Firebase config files must keep their standard basenames (`google-services.json`
 ### Examples
 
 ```bash
-# Fully interactive: name → RN version → packages → notifications → Firebase → icon → splash
+# Fully interactive: name → icon/splash paths → RN version → packages → notifications → Firebase
 npx create-react-native-setup
 
 # Non-interactive defaults (no branding / Firebase / notifications)
@@ -109,7 +110,7 @@ The CLI creates the project in the **current working directory**. You only answe
 9. Installs with the detected package manager
 10. Applies idempotent setup (Babel plugin, entry import, Android permissions, Info.plist, pods)
 11. Copies Firebase configs, wires Gradle / AppDelegate, configures notifications, and writes a JS bootstrap
-12. Asks for an app icon and splash image, then generates the native assets
+12. Asks early for app icon and splash image paths, then generates and applies them automatically after setup
 13. Prints a report and writes `create-react-native-setup-report.json` in the new project
 
 Passing `--rn-version`, `--icon`, `--splash`, `--google-services`, `--google-service-info`, or `--notifications` skips the matching prompt; `--yes` skips all of them.
@@ -124,19 +125,27 @@ Passing `--rn-version`, `--icon`, `--splash`, `--google-services`, `--google-ser
 
 ## App icon and splash screen
 
-Both are generated as **native assets only** — no splash or icon library is added to your app by default.
+Early in configuration the CLI asks:
+
+- `App icon image path (blank to skip)`
+- `Splash screen image path (blank to skip)`
+
+If a splash path is given, it asks which package to install (default can be overridden with `--splash-package`):
+
+1. `react-native-bootsplash` (recommended) — install + official `generate` + hide()
+2. `react-native-splash-screen` — install + native assets + show()/hide()
+3. Native assets only — no splash npm package
+
+Background color defaults to `#ffffff` (blank accepts the default). After all answers, setup runs automatically and generates/applies icon + splash with no extra manual steps. Layout is **background + centered logo** (no crop/stretch).
+
+App icons are always native launcher assets (Android mipmaps + iOS AppIcon).
 
 **App icon** — resizes your image into every Android launcher density
 (`mipmap-mdpi` … `mipmap-xxxhdpi`, including `ic_launcher_round.png`) and every slot in the
 iOS `AppIcon.appiconset`, writing the `filename` entries into `Contents.json` so Xcode picks
 them up.
 
-**Splash screen** — writes `splash_image.png` into each Android `drawable-*dpi` folder, adds a
-`drawable/splash.xml` layer-list, and points `AppTheme`'s `android:windowBackground` at it. On
-iOS it creates `Splash.imageset` and a `LaunchScreen.storyboard` that centers the image.
-
-Because the splash is drawn by the OS before the first React frame, no `SplashScreen.hide()`
-call is needed for the native-assets path.
+**Native / splash-screen assets** — writes density splash drawables and a centered LaunchScreen image on a solid background.
 
 ## Extending the catalog
 

@@ -117,46 +117,78 @@ test('collectBrandingOptions: --yes still honors explicit flags', async () => {
   assert.equal(result.splashPath, undefined);
 });
 
-test('collectBrandingOptions: prompts for both images', async () => {
+test('collectBrandingOptions: prompts for both image paths', async () => {
+  const questions = [];
   const result = await collectBrandingOptions({
-    askYesNo: async () => true,
-    askText: async () => FIXTURE,
+    askText: async (question) => {
+      questions.push(question);
+      if (/Choose splash|splash package/i.test(question)) return '3';
+      if (/background/i.test(question)) return '#ffffff';
+      return FIXTURE;
+    },
   });
   assert.equal(result.iconPath, path.resolve(FIXTURE));
   assert.equal(result.splashPath, path.resolve(FIXTURE));
+  assert.equal(result.splashPackage, 'native');
+  assert.equal(result.splashBackground, '#ffffff');
+  assert.match(questions[0], /App icon image path/i);
+  assert.match(questions[1], /Splash screen image path/i);
 });
 
-test('collectBrandingOptions: declining both prompts collects nothing', async () => {
+test('collectBrandingOptions: asks which splash package after splash path', async () => {
   const result = await collectBrandingOptions({
-    askYesNo: async () => false,
-    askText: async () => FIXTURE,
+    askText: async (question) => {
+      if (/App icon/i.test(question)) return '';
+      if (/Splash screen image path/i.test(question)) return FIXTURE;
+      if (/Choose splash|splash package/i.test(question)) return '1';
+      if (/background/i.test(question)) return '#112233';
+      return '';
+    },
+  });
+  assert.equal(result.splashPackage, 'bootsplash');
+  assert.equal(result.splashBackground, '#112233');
+  assert.equal(result.splashPath, path.resolve(FIXTURE));
+  assert.equal(result.iconPath, undefined);
+});
+
+test('collectBrandingOptions: --yes --splash defaults to bootsplash', async () => {
+  const result = await collectBrandingOptions({
+    yes: true,
+    splashPath: FIXTURE,
+  });
+  assert.equal(result.splashPackage, 'bootsplash');
+  assert.equal(result.splashPath, path.resolve(FIXTURE));
+});
+
+test('collectBrandingOptions: blank paths skip branding', async () => {
+  const result = await collectBrandingOptions({
+    askText: async () => '',
   });
   assert.deepEqual(result, {});
 });
 
 test('collectBrandingOptions: re-asks after an invalid path', async () => {
-  const answers = ['/nope/missing.png', FIXTURE];
+  const answers = ['/nope/missing.png', FIXTURE, ''];
   const result = await collectBrandingOptions({
-    iconPath: undefined,
-    askYesNo: async (question) => question.includes('icon'),
     askText: async () => answers.shift(),
   });
   assert.equal(result.iconPath, path.resolve(FIXTURE));
+  assert.equal(result.splashPath, undefined);
   assert.equal(answers.length, 0);
 });
 
-test('collectBrandingOptions: a flag skips its own prompt', async () => {
+test('collectBrandingOptions: --icon flag skips icon path prompt', async () => {
   const questions = [];
   const result = await collectBrandingOptions({
     iconPath: FIXTURE,
-    askYesNo: async (question) => {
+    askText: async (question) => {
       questions.push(question);
-      return false;
+      return '';
     },
   });
   assert.equal(result.iconPath, path.resolve(FIXTURE));
   assert.equal(questions.length, 1);
-  assert.match(questions[0], /splash/i);
+  assert.match(questions[0], /Splash screen image path/i);
 });
 
 test('applyIcon: dry-run writes nothing', async () => {
@@ -205,7 +237,7 @@ test('applyBranding: dry-run reports skipped even before the project exists', as
   const missing = path.join(os.tmpdir(), 'crns-not-created-yet');
   const results = await applyBranding(
     missing,
-    { iconPath: FIXTURE, splashPath: FIXTURE },
+    { iconPath: FIXTURE, splashPath: FIXTURE, splashPackage: 'native' },
     { dryRun: true },
   );
   assert.equal(results.length, 2);
@@ -269,7 +301,11 @@ test('applySplash: does not duplicate the theme item when run twice', async () =
 
 test('applyBranding: returns a report entry per requested image', async () => {
   const dir = fakeProject();
-  const results = await applyBranding(dir, { iconPath: FIXTURE, splashPath: FIXTURE }, {});
+  const results = await applyBranding(
+    dir,
+    { iconPath: FIXTURE, splashPath: FIXTURE, splashPackage: 'native' },
+    {},
+  );
   assert.deepEqual(
     results.map((entry) => entry.type),
     ['appIcon', 'splashScreen'],

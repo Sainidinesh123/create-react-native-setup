@@ -11,7 +11,7 @@ import { createReactNativeProject, readProjectVersions } from './createProject.j
 import { resolveSelectedPackages } from './resolveVersions.js';
 import { installPackages } from './installPackages.js';
 import { runSetupSteps } from './setup/registry.js';
-import { collectBrandingOptions, applyBranding } from './branding/index.js';
+import { collectBrandingOptions, applyBranding, SPLASH_NPM_BY_ID } from './branding/index.js';
 import {
   collectFirebaseOptions,
   applyFirebase,
@@ -33,6 +33,10 @@ export async function run(options = {}) {
   const cwd = options.cwd || process.cwd();
 
   console.log(`\ncreate-react-native-setup (${platformLabel()})\n`);
+  if (!options.yes) {
+    console.log('── Configuration ──────────────────────────────────────────');
+    console.log('Answer the questions below. Project creation starts only after this.\n');
+  }
 
   const catalog = loadCatalog(options.configPath);
   let projectName = options.projectName;
@@ -44,11 +48,19 @@ export async function run(options = {}) {
     );
   }
 
+  // Icon / splash paths first so generation can run automatically after setup.
+  const branding = await collectBrandingOptions({
+    yes: Boolean(options.yes),
+    iconPath: options.iconPath,
+    splashPath: options.splashPath,
+    splashPackage: options.splashPackage,
+    splashBackground: options.splashBackground,
+  });
+
   const requestedVersion = await resolveReactNativeVersion({
     requested: options.rnVersion,
     yes: Boolean(options.yes),
   });
-  console.log(`\nUsing React Native ${requestedVersion}.\n`);
 
   let selected = await selectPackages(catalog, { yes: Boolean(options.yes) });
 
@@ -78,19 +90,31 @@ export async function run(options = {}) {
     firebaseSelected,
   });
 
-  console.log(
-    selected.length
-      ? `\nSelected ${selected.length} package group entry(ies).\n`
-      : '\nNo optional packages selected.\n',
-  );
-
-  const branding = await collectBrandingOptions({
-    yes: Boolean(options.yes),
-    iconPath: options.iconPath,
-    splashPath: options.splashPath,
-  });
-
   closePrompts();
+
+  console.log('\n── Summary ────────────────────────────────────────────────');
+  console.log(`  Project:        ${projectName}`);
+  console.log(`  React Native:   ${requestedVersion}`);
+  console.log(
+    `  Packages:       ${selected.length ? selected.map((p) => p.id).join(', ') : '(none)'}`,
+  );
+  if (firebasePaths.googleServicesPath || firebasePaths.googleServiceInfoPath) {
+    console.log('  Firebase:       config path(s) provided');
+  }
+  if (branding.iconPath) {
+    console.log(`  App icon:       ${branding.iconPath}`);
+  }
+  if (branding.splashPath) {
+    console.log(
+      `  Splash:         ${branding.splashPackage || 'native'} @ ${branding.splashBackground || '#ffffff'}`,
+    );
+    console.log(`  Splash image:   ${branding.splashPath}`);
+  }
+  console.log(
+    options.dryRun
+      ? '\nStarting dry-run (no files will be written)...\n'
+      : '\nStarting setup automatically...\n',
+  );
 
   let projectPath = path.join(cwd, projectName);
   let reactNativeVersion = requestedVersion;
@@ -118,8 +142,27 @@ export async function run(options = {}) {
     react: reactVersion || '19.0.0',
   };
 
+  const splashNpm = branding.splashPackage
+    ? SPLASH_NPM_BY_ID[branding.splashPackage]
+    : null;
+
   console.log('Resolving compatible package versions...\n');
-  const { resolved, skipped } = await resolveSelectedPackages(selected, context);
+  const { resolved, skipped } = await resolveSelectedPackages([...selected], context);
+
+  if (splashNpm) {
+    const splashResolved = await resolveSelectedPackages(
+      [{ id: 'splash-lib', npm: [splashNpm], peers: [] }],
+      context,
+    );
+    for (const item of splashResolved.resolved) {
+      if (!resolved.some((r) => r.name === item.name)) {
+        resolved.push(item);
+      }
+    }
+    for (const item of splashResolved.skipped) {
+      skipped.push(item);
+    }
+  }
 
   for (const item of resolved) {
     console.log(`  ✓ ${item.name}@${item.version}`);
