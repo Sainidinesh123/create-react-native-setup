@@ -1,7 +1,7 @@
 {
   "name": "create-react-native-setup",
   "version": "1.2.1",
-  "description": "Single-command React Native project bootstrapper with compatible package installs, Firebase/notification setup, native app icon and splash screen generation, and automated setup",
+  "description": "React Native CLI project generator and starter — scaffold a bare RN app with compatible packages, Firebase setup, push notifications, app icon, and splash screen",
   "type": "module",
   "bin": {
     "create-react-native-setup": "bin/create-react-native-setup.js"
@@ -29,19 +29,14 @@
     "react-native",
     "react-native-cli",
     "react-native-setup",
-    "react-native-scaffold",
-    "react-native-boilerplate",
     "react-native-starter",
-    "cli",
+    "project-generator",
     "scaffold",
-    "bootstrap",
-    "react-native-bootstrap",
+    "npx",
+    "firebase",
+    "push-notifications",
     "app-icon",
     "splash-screen",
-    "firebase",
-    "notifications",
-    "react-native-firebase",
-    "create-react-native-app",
     "create-react-native-setup"
   ],
   "license": "MIT",

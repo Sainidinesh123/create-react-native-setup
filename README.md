@@ -1,6 +1,42 @@
 # create-react-native-setup
 
-Single-command CLI that creates a bare React Native project and optionally installs commonly used packages with **compatible stable versions**, automated post-install setup, and a detailed report.
+[![npm version](https://img.shields.io/npm/v/create-react-native-setup.svg)](https://www.npmjs.com/package/create-react-native-setup)
+[![npm downloads](https://img.shields.io/npm/dm/create-react-native-setup.svg)](https://www.npmjs.com/package/create-react-native-setup)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Node.js](https://img.shields.io/node/v/create-react-native-setup.svg)](https://nodejs.org)
+
+```bash
+npx create-react-native-setup MyApp
+```
+
+**create-react-native-setup** is a React Native CLI / project generator that scaffolds a bare React Native starter with guided setup. It installs compatible packages, can configure Firebase setup and push notifications, and generates native app icons and splash screens—then prints a clear report of what changed.
+
+Use it when you want a faster React Native setup than a blank Community CLI init, without adopting Expo.
+
+## Features
+
+- React Native project generator built on `@react-native-community/cli`
+- Optional package groups (navigation, animation, camera, Firebase, and more)
+- Compatible stable version resolution (no hardcoded npm versions)
+- Firebase config copy + Android/iOS wiring
+- Push notifications via `@react-native-firebase/messaging` and/or `@notifee/react-native`
+- Native app icon and splash screen generation
+- Idempotent native/Babel/JS setup steps and a post-run report
+
+## Quick start
+
+```bash
+npx create-react-native-setup MyApp
+```
+
+Or install globally:
+
+```bash
+npm i -g create-react-native-setup
+create-react-native-setup MyApp
+```
+
+> **`npm i create-react-native-setup` alone does not create a project.** It only installs the CLI into `node_modules`. Use `npx create-react-native-setup MyApp` (or a global install) to scaffold.
 
 ## Requirements
 
@@ -8,31 +44,7 @@ Single-command CLI that creates a bare React Native project and optionally insta
 - Network access (npm registry)
 - For iOS pods: macOS with CocoaPods
 
-## Install / run
-
-### From this folder (development)
-
-```bash
-cd Desktop/NewProject/create-rn-setup
-npm install
-node bin/create-react-native-setup.js MyApp
-```
-
-### From npm
-
-```bash
-npx create-react-native-setup MyApp
-# or
-npm i -g create-react-native-setup
-create-react-native-setup MyApp
-```
-
-> **`npm i create-react-native-setup` does not create a project.** It only downloads
-> this CLI into `node_modules`, which is why you see `up to date, audited N packages`
-> and no new app folder. Use `npx create-react-native-setup MyApp` to scaffold, or
-> install globally with `-g` so the `create-react-native-setup` command is on your PATH.
-
-## Usage
+## React Native CLI setup (usage)
 
 ```bash
 npx create-react-native-setup [projectName] [options]
@@ -48,7 +60,7 @@ npx create-react-native-setup [projectName] [options]
 | `--google-service-info <file>` | `GoogleService-Info.plist` for iOS Firebase |
 | `--notifications <list>` | Notification packages: `messaging`, `notifee` (or `none`) |
 | `--config <file>` | Use a custom package catalog JSON |
-| `--dry-run` | Resolve and print the plan without creating files or installing |
+| `--dry-run` | Resolve and print the plan without creating or installing |
 | `--help`, `-h` | Show help |
 
 Images may be `.png`, `.jpg`, `.jpeg`, or `.webp`. A square source works best.
@@ -69,7 +81,7 @@ npx create-react-native-setup MyApp --rn-version 0.81.6
 # Branding without prompts
 npx create-react-native-setup MyApp --yes --icon ./icon.png --splash ./splash.png
 
-# Notifications + Firebase configs without prompts
+# Push notifications + Firebase configs without prompts
 npx create-react-native-setup MyApp --yes \
   --notifications messaging,notifee \
   --google-services ./google-services.json \
@@ -84,7 +96,7 @@ npx create-react-native-setup MyApp --config ./my-catalog.json
 
 The CLI creates the project in the **current working directory**. You only answer prompts; installs, config edits, asset generation, and `pod install` (on macOS) run automatically.
 
-## What it does
+## What the generator does
 
 1. Prompts for the project name
 2. Prompts for the React Native version (blank keeps the latest stable)
@@ -102,17 +114,17 @@ The CLI creates the project in the **current working directory**. You only answe
 
 Passing `--rn-version`, `--icon`, `--splash`, `--google-services`, `--google-service-info`, or `--notifications` skips the matching prompt; `--yes` skips all of them.
 
-## Firebase and notifications
+## Firebase setup and push notifications
 
 **Firebase config files** — copies `google-services.json` to `android/app/` and `GoogleService-Info.plist` to `ios/<App>/`, adds the Google Services Gradle plugin, and calls `FirebaseApp.configure()` from the iOS AppDelegate. Xcode target membership for the plist is reported as a manual step when it cannot be automated safely.
 
-**Notifications** — installs `@react-native-firebase/messaging` and/or `@notifee/react-native`, ensures `POST_NOTIFICATIONS`, merges `UIBackgroundModes` (`remote-notification`), writes `src/notifications.js` (or `.ts`) without overwriting an existing file, and imports it from the app entry.
+**Push notifications** — installs `@react-native-firebase/messaging` and/or `@notifee/react-native`, ensures `POST_NOTIFICATIONS`, merges `UIBackgroundModes` (`remote-notification`), writes `src/notifications.js` (or `.ts`) without overwriting an existing file, and imports it from the app entry.
 
 **Still manual:** upload an APNs auth key to Firebase Console → Cloud Messaging, and enable Push Notifications in Xcode / the Apple Developer portal.
 
 ## App icon and splash screen
 
-Both are generated as **native assets only** — no splash or icon library is added to your app.
+Both are generated as **native assets only** — no splash or icon library is added to your app by default.
 
 **App icon** — resizes your image into every Android launcher density
 (`mipmap-mdpi` … `mipmap-xxxhdpi`, including `ic_launcher_round.png`) and every slot in the
@@ -124,7 +136,7 @@ them up.
 iOS it creates `Splash.imageset` and a `LaunchScreen.storyboard` that centers the image.
 
 Because the splash is drawn by the OS before the first React frame, no `SplashScreen.hide()`
-call is needed.
+call is needed for the native-assets path.
 
 ## Extending the catalog
 
@@ -172,24 +184,21 @@ Edit `catalogs/default.json` or pass `--config`:
 
 Add a new handler under `src/setup/` and register it in `src/setup/registry.js`.
 
-## Publish to npm
+## Contributing / local development
 
 ```bash
-npm login
-npm publish
-```
-
-Then anyone can run:
-
-```bash
-npx create-react-native-setup MyApp
-```
-
-## Tests
-
-```bash
+git clone https://github.com/Sainidinesh123/create-react-native-setup.git
+cd create-react-native-setup
+npm install
+node bin/create-react-native-setup.js MyApp
 npm test
 ```
+
+## Links
+
+- npm: https://www.npmjs.com/package/create-react-native-setup
+- Source: https://github.com/Sainidinesh123/create-react-native-setup
+- Issues: https://github.com/Sainidinesh123/create-react-native-setup/issues
 
 ## License
 
