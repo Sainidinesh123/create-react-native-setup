@@ -149,8 +149,8 @@ Options:
   --help, -h             Show this help
 
 Interactive prompts (skipped by --yes or when the matching flag is passed):
-  project name → app icon path → splash path → React Native version → package groups
-  → notification packages → Firebase config files
+  project name → React Native version → package groups → notification packages
+  → Firebase config files → app icon → splash screen
 
 Examples:
   npx create-react-native-setup

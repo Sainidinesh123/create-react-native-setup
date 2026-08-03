@@ -48,15 +48,6 @@ export async function run(options = {}) {
     );
   }
 
-  // Icon / splash paths first so generation can run automatically after setup.
-  const branding = await collectBrandingOptions({
-    yes: Boolean(options.yes),
-    iconPath: options.iconPath,
-    splashPath: options.splashPath,
-    splashPackage: options.splashPackage,
-    splashBackground: options.splashBackground,
-  });
-
   const requestedVersion = await resolveReactNativeVersion({
     requested: options.rnVersion,
     yes: Boolean(options.yes),
@@ -88,6 +79,14 @@ export async function run(options = {}) {
     googleServicesPath: options.googleServicesPath,
     googleServiceInfoPath: options.googleServiceInfoPath,
     firebaseSelected,
+  });
+
+  const branding = await collectBrandingOptions({
+    yes: Boolean(options.yes),
+    iconPath: options.iconPath,
+    splashPath: options.splashPath,
+    splashPackage: options.splashPackage,
+    splashBackground: options.splashBackground,
   });
 
   closePrompts();

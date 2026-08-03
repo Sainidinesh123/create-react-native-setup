@@ -70,7 +70,7 @@ Firebase config files must keep their standard basenames (`google-services.json`
 ### Examples
 
 ```bash
-# Fully interactive: name → icon/splash paths → RN version → packages → notifications → Firebase
+# Fully interactive: name → RN version → packages → notifications → Firebase → icon → splash
 npx create-react-native-setup
 
 # Non-interactive defaults (no branding / Firebase / notifications)
@@ -110,7 +110,7 @@ The CLI creates the project in the **current working directory**. You only answe
 9. Installs with the detected package manager
 10. Applies idempotent setup (Babel plugin, entry import, Android permissions, Info.plist, pods)
 11. Copies Firebase configs, wires Gradle / AppDelegate, configures notifications, and writes a JS bootstrap
-12. Asks early for app icon and splash image paths, then generates and applies them automatically after setup
+12. Asks whether to set app icon / splash, then image paths, and applies them automatically after setup
 13. Prints a report and writes `create-react-native-setup-report.json` in the new project
 
 Passing `--rn-version`, `--icon`, `--splash`, `--google-services`, `--google-service-info`, or `--notifications` skips the matching prompt; `--yes` skips all of them.
@@ -125,12 +125,12 @@ Passing `--rn-version`, `--icon`, `--splash`, `--google-services`, `--google-ser
 
 ## App icon and splash screen
 
-Early in configuration the CLI asks:
+Near the end of configuration the CLI asks:
 
-- `App icon image path (blank to skip)`
-- `Splash screen image path (blank to skip)`
+- `Set a custom app icon? (y/N)` → if yes, `App icon image path`
+- `Set a custom splash screen? (y/N)` → if yes, splash package, image path, and background
 
-If a splash path is given, it asks which package to install (default can be overridden with `--splash-package`):
+Splash package choices:
 
 1. `react-native-bootsplash` (recommended) — install + official `generate` + hide()
 2. `react-native-splash-screen` — install + native assets + show()/hide()

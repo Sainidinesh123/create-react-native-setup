@@ -103,7 +103,7 @@ export async function askProjectName(initial) {
     return initial;
   }
   while (true) {
-    const name = await askText('What is your project name? ');
+    const name = await askText(promptLabel('What is your project name? '));
     if (isValidProjectName(name)) {
       return name;
     }

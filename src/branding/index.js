@@ -36,9 +36,8 @@ export function assertBrandingFlagPaths(flags = {}) {
 }
 
 /**
- * Ask for icon + splash image paths up front (blank skips).
- * When a splash path is set, chooses package/background, then applyBranding
- * generates and wires assets with no further manual steps.
+ * Ask whether to configure icon/splash, then collect image paths when confirmed.
+ * applyBranding later generates and wires assets with no further manual steps.
  * @returns {Promise<{
  *   iconPath?: string,
  *   splashPath?: string,
@@ -56,8 +55,9 @@ export async function collectBrandingOptions(options = {}) {
     if (!result.ok) throw new Error(result.error);
     collected.iconPath = result.absolutePath;
   } else if (!options.yes) {
-    const iconPath = await askOptionalImagePath(prompt, 'App icon image path');
-    if (iconPath) collected.iconPath = iconPath;
+    if (await confirm('Set a custom app icon?', { defaultYes: false })) {
+      collected.iconPath = await askForImagePath(prompt, 'App icon image path');
+    }
   }
 
   if (options.splashPath) {
@@ -65,25 +65,39 @@ export async function collectBrandingOptions(options = {}) {
     if (!result.ok) throw new Error(result.error);
     collected.splashPath = result.absolutePath;
   } else if (!options.yes) {
-    const splashPath = await askOptionalImagePath(prompt, 'Splash screen image path');
-    if (splashPath) collected.splashPath = splashPath;
+    if (await confirm('Set a custom splash screen?', { defaultYes: false })) {
+      collected.splashPackage = await collectSplashPackageChoice({
+        splashPackage: options.splashPackage,
+        askText: prompt,
+        askYesNo: confirm,
+      });
+      const npmName = SPLASH_NPM_BY_ID[collected.splashPackage];
+      if (npmName) {
+        console.log(color.green(`  Will install and configure ${npmName}`));
+      } else {
+        console.log(color.dim('  Using native assets only (no splash npm package)'));
+      }
+      collected.splashPath = await askForImagePath(prompt, 'Splash screen image path');
+      collected.splashBackground = await collectSplashBackground({
+        splashBackground: options.splashBackground,
+        askText: prompt,
+      });
+    }
   }
 
-  if (collected.splashPath) {
+  if (collected.splashPath && !collected.splashPackage) {
     collected.splashPackage = await collectSplashPackageChoice({
       splashPackage: options.splashPackage,
       yes: options.yes,
       askText: prompt,
       askYesNo: confirm,
     });
-
     const npmName = SPLASH_NPM_BY_ID[collected.splashPackage];
     if (npmName) {
       console.log(color.green(`  Will install and configure ${npmName}`));
     } else {
       console.log(color.dim('  Using native assets only (no splash npm package)'));
     }
-
     collected.splashBackground = await collectSplashBackground({
       yes: options.yes,
       splashBackground: options.splashBackground,
@@ -94,16 +108,10 @@ export async function collectBrandingOptions(options = {}) {
   return collected;
 }
 
-/**
- * Path prompt that allows blank to skip. Re-asks until valid when non-blank.
- * @returns {Promise<string | undefined>}
- */
-async function askOptionalImagePath(prompt, label) {
+/** Re-ask until a valid image path is provided. */
+async function askForImagePath(prompt, label) {
   while (true) {
-    const answer = await prompt(`${label} (blank to skip): `);
-    if (!answer) {
-      return undefined;
-    }
+    const answer = await prompt(`${label}: `);
     const result = validateImagePath(answer);
     if (result.ok) {
       return result.absolutePath;

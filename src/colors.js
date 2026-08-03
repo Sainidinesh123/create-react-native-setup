@@ -16,7 +16,7 @@ export const color = {
   dim: wrap(2, 22),
 };
 
-/** Colorize a question label for interactive prompts. */
+/** Colorize a question label for interactive prompts (green + bold). */
 export function promptLabel(text) {
-  return color.cyan(color.bold(text));
+  return color.green(color.bold(text));
 }
