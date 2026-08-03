@@ -1,6 +1,6 @@
 {
   "name": "create-react-native-setup",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Single-command React Native project bootstrapper with compatible package installs, Firebase/notification setup, native app icon and splash screen generation, and automated setup",
   "type": "module",
   "bin": {
