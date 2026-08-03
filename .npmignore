@@ -1,0 +1,45 @@
+# Development-only paths — never ship these to npm consumers.
+# Runtime requires: bin/, src/, catalogs/ (bin imports src; catalog loads catalogs/default.json).
+
+test/
+tests/
+docs/
+.github/
+.vscode/
+.idea/
+screenshots/
+coverage/
+tmp/
+temp/
+
+# Local / tooling config
+.editorconfig
+.eslintrc*
+.eslintignore
+.prettierrc*
+.prettierignore
+.stylelintrc*
+.tsconfig*
+jsconfig.json
+*.tsbuildinfo
+.nvmrc
+.npmrc
+.env
+.env.*
+!.env.example
+
+# VCS / CI / editor noise
+.git/
+.gitignore
+.gitattributes
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lockfile is not needed for consumers of this CLI
+package-lock.json
+
+# Design / planning artefacts
+*.canvas.tsx

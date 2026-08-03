@@ -14,7 +14,8 @@
     "bin",
     "src",
     "catalogs",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "start": "node ./bin/create-react-native-setup.js",
@@ -26,14 +27,32 @@
   },
   "keywords": [
     "react-native",
+    "react-native-cli",
+    "react-native-setup",
+    "react-native-scaffold",
+    "react-native-boilerplate",
+    "react-native-starter",
     "cli",
     "scaffold",
     "bootstrap",
+    "react-native-bootstrap",
     "app-icon",
     "splash-screen",
+    "firebase",
+    "notifications",
+    "react-native-firebase",
+    "create-react-native-app",
     "create-react-native-setup"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sainidinesh123/create-react-native-setup.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sainidinesh123/create-react-native-setup/issues"
+  },
+  "homepage": "https://github.com/Sainidinesh123/create-react-native-setup#readme",
   "dependencies": {
     "cross-spawn": "^7.0.6",
     "semver": "^7.7.2",
