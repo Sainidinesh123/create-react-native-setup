@@ -1,6 +1,6 @@
 {
   "name": "create-react-native-setup",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "React Native CLI project generator and starter — scaffold a bare RN app with compatible packages, Firebase setup, push notifications, app icon, and splash screen",
   "type": "module",
   "bin": {

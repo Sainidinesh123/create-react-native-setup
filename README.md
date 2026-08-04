@@ -132,11 +132,13 @@ Near the end of configuration the CLI asks:
 
 Splash package choices:
 
-1. `react-native-bootsplash` (recommended) — install + official `generate` + hide()
+1. `react-native-bootsplash` (recommended) — install + official `generate` + auto wire Android (`BootTheme` in `styles.xml`, Manifest theme, `MainActivity` init) and iOS AppDelegate + hide()
 2. `react-native-splash-screen` — install + native assets + show()/hide()
 3. Native assets only — no splash npm package
 
 Background color defaults to `#ffffff` (blank accepts the default). After all answers, setup runs automatically and generates/applies icon + splash with no extra manual steps. Layout is **background + centered logo** (no crop/stretch).
+
+For BootSplash, the scaffolder always ensures `R.style.BootTheme` exists (parent `Theme.BootSplash` for v7+) even if the generate CLI fails or writes an obsolete `Theme.BootSplash.EdgeToEdge` parent.
 
 App icons are always native launcher assets (Android mipmaps + iOS AppIcon).
 
