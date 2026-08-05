@@ -1,7 +1,7 @@
 {
   "name": "create-react-native-setup",
-  "version": "1.2.6",
-  "description": "React Native CLI project generator — scaffold bare RN apps with Firebase, FCM push, app icons, splash screens & compatible packages",
+  "version": "1.2.7",
+  "description": "Create React Native App CLI — bare RN project generator with Firebase, FCM push, app icons, splash screen & starter packages",
   "type": "module",
   "bin": {
     "create-react-native-setup": "bin/create-react-native-setup.js"
@@ -29,9 +29,11 @@
   "keywords": [
     "react-native",
     "react-native-cli",
+    "create-react-native-app",
     "react-native-template",
     "react-native-starter",
     "react-native-boilerplate",
+    "react-native-bootstrap",
     "react-native-setup",
     "bare-react-native",
     "project-generator",
@@ -43,10 +45,13 @@
     "android",
     "ios",
     "firebase",
+    "react-native-firebase",
     "fcm",
     "push-notifications",
+    "react-native-push-notification",
     "app-icon",
     "splash-screen",
+    "react-native-splash-screen",
     "react-native-bootsplash",
     "create-react-native-setup"
   ],
@@ -54,6 +59,20 @@
     "name": "Sainidinesh123",
     "url": "https://github.com/Sainidinesh123"
   },
+  "contributors": [
+    {
+      "name": "coderusecode",
+      "url": "https://www.npmjs.com/~coderusecode"
+    },
+      {
+        "name": "alix1",
+        "url": "https://www.npmjs.com/~alix1"
+      },
+    {
+      "name": "hstanwar",
+      "url": "https://www.npmjs.com/~hstanwar"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -63,6 +82,9 @@
     "url": "https://github.com/Sainidinesh123/create-react-native-setup/issues"
   },
   "homepage": "https://github.com/Sainidinesh123/create-react-native-setup#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "cross-spawn": "^7.0.6",
     "semver": "^7.7.2",

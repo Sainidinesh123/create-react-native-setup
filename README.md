@@ -1,62 +1,81 @@
-# create-react-native-setup — React Native CLI project generator & starter kit
+# create-react-native-setup
+
+### Create React Native App — bare React Native CLI project generator & starter kit
 
 [![npm version](https://img.shields.io/npm/v/create-react-native-setup.svg)](https://www.npmjs.com/package/create-react-native-setup)
 [![npm downloads](https://img.shields.io/npm/dm/create-react-native-setup.svg)](https://www.npmjs.com/package/create-react-native-setup)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/Sainidinesh123/create-react-native-setup.svg?style=social)](https://github.com/Sainidinesh123/create-react-native-setup/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/Sainidinesh123/create-react-native-setup?style=social)](https://github.com/Sainidinesh123/create-react-native-setup/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/Sainidinesh123/create-react-native-setup.svg)](https://github.com/Sainidinesh123/create-react-native-setup/issues)
-[![Node.js](https://img.shields.io/node/v/create-react-native-setup.svg)](https://nodejs.org)
+[![CI](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/Sainidinesh123/create-react-native-setup)
 
 ```bash
 npx create-react-native-setup MyApp
 ```
 
-**create-react-native-setup** is a React Native CLI project generator and starter kit for **bare React Native** (Android & iOS). It scaffolds a production-oriented app with guided package selection, Firebase / FCM push notification setup, native **app icon** and **splash screen** generation, and compatible dependency resolution—then prints a clear report of every change.
+**create-react-native-setup** is a **React Native CLI tool** and **bare React Native project generator**. It scaffolds an Android & iOS app, installs compatible starter packages, and can configure **Firebase**, **FCM push notifications**, **app icons**, and **splash screens**—then prints a clear report of every change.
 
-Use this React Native bootstrap CLI when you want more than a blank Community CLI init, without locking into Expo managed workflow.
+Inspired by the developer experience of tools like `create-vite` and `create-expo-app`, focused on **bare React Native** (Community CLI), not Expo managed workflow.
 
-## Why use this package?
+## Table of contents
 
-| Pain point | What this CLI does |
-|------------|--------------------|
-| Blank `init` leaves hours of wiring | Selects navigation, reanimated, camera, Firebase, and more in one flow |
-| Version conflicts across peers | Resolves the latest **compatible stable** npm versions for your RN release |
-| Firebase / FCM setup is error-prone | Copies configs, wires Gradle & AppDelegate, bootstraps notification JS |
-| Icons & splash are tedious | Generates Android + iOS assets; optional `react-native-bootsplash` auto-config |
-| Hard to know what changed | Writes a terminal report + `create-react-native-setup-report.json` |
+- [Features](#features)
+- [Why use this package?](#why-use-this-package)
+- [Comparison with manual React Native setup](#comparison-with-manual-react-native-setup)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Interactive CLI walkthrough](#interactive-cli-walkthrough)
+- [Screenshots & GIFs](#screenshots--gifs)
+- [Generated folder structure](#generated-folder-structure)
+- [Supported React Native versions](#supported-react-native-versions)
+- [Firebase setup](#firebase-setup)
+- [Push notifications](#push-notifications)
+- [Splash screen](#splash-screen)
+- [App icon generation](#app-icon-generation)
+- [Supported platforms](#supported-platforms)
+- [Requirements](#requirements)
+- [Examples](#examples)
+- [Troubleshooting](#troubleshooting)
+- [FAQ](#faq)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 ## Features
 
-- **React Native project generator** on top of `@react-native-community/cli`
-- **Bare React Native** Android & iOS scaffold (not Expo-managed)
-- Optional package **groups** (navigation, animation, camera, Firebase, analytics, …)
-- Compatible stable **version resolution** (no hardcoded package versions)
-- **Firebase** config copy + Google Services Gradle / iOS `FirebaseApp.configure()`
-- **Push notifications / FCM** via `@react-native-firebase/messaging` and/or `@notifee/react-native`
-- Native **app icon** generation (mipmaps + iOS AppIcon)
+- **Create React Native App** experience via `npx`
+- **Bare React Native** Android & iOS scaffold (`@react-native-community/cli`)
+- Optional **React Native starter** package groups (navigation, animation, camera, Firebase, …)
+- Compatible **stable version resolution** (no hardcoded peer versions)
+- **React Native Firebase** config copy + Gradle / AppDelegate wiring
+- **FCM / push notifications** (`@react-native-firebase/messaging`, Notifee)
+- Native **app icon** generation (Android mipmaps + iOS AppIcon)
 - **Splash screen** via BootSplash, `react-native-splash-screen`, or native assets
-- Idempotent Babel / entry / permission / Info.plist setup
-- Interactive or fully non-interactive (`--yes`) with `npx`
+- Idempotent Babel / entry / permissions / Info.plist steps
+- Interactive **or** fully non-interactive (`--yes`)
 
-## Screenshots
+## Why use this package?
 
-> Placeholder — add PNGs under `docs/assets/` and link them here after you capture a demo run.
+Blank `npx @react-native-community/cli init` is a great starting point—but teams still re-do Firebase, FCM, icons, splash, and peer-compatible installs on every project.
 
-```text
-docs/assets/cli-interactive.png     # package group prompts
-docs/assets/report.png              # final setup report
-docs/assets/android-splash.png      # cold-start splash
-docs/assets/ios-icon.png            # generated app icon
-```
+**create-react-native-setup** is a **React Native bootstrap / project generator** that keeps bare RN ownership while removing repetitive setup.
 
-<!-- Example once files exist:
-![Interactive CLI](docs/assets/cli-interactive.png)
-![Setup report](docs/assets/report.png)
--->
+## Comparison with manual React Native setup
+
+| Task | Manual bare RN | create-react-native-setup |
+|------|----------------|---------------------------|
+| Create app | Community CLI init | Same foundation + guided extras |
+| Pick libraries | Search, trial, peer conflicts | Catalog groups + compatible resolve |
+| Firebase | Hand-edit Gradle / AppDelegate | Optional automated wiring |
+| Push / FCM | Permissions + bootstrap by hand | messaging / Notifee options |
+| App icon | Multiple densities / Xcode slots | One image → generated assets |
+| Splash | Native themes / BootSplash CLI | Package choice + auto native wire |
+| Visibility | Guess what changed | Terminal report + JSON |
 
 ## Installation
 
-This package is a **CLI**. Prefer `npx` (no global install required):
+Prefer **npx** (no global install):
 
 ```bash
 npx create-react-native-setup MyApp
@@ -69,15 +88,7 @@ npm install -g create-react-native-setup
 create-react-native-setup MyApp
 ```
 
-> **`npm install create-react-native-setup` alone does not create a project.**  
-> It only installs the React Native CLI tool into `node_modules`. Always run the binary via `npx` or a global install.
-
-### Requirements
-
-- Node.js **18+**
-- Network access to the npm registry
-- For iOS pods: **macOS** with CocoaPods
-- For Android builds: Android SDK (`ANDROID_HOME`) and a device/emulator
+> `npm install create-react-native-setup` **only installs the CLI**. It does **not** create a project. Always invoke the binary.
 
 ## Usage
 
@@ -87,197 +98,185 @@ npx create-react-native-setup [projectName] [options]
 
 | Option | Description |
 |--------|-------------|
-| `--yes`, `-y`, `--default` | Accept defaults and skip every prompt |
-| `--rn-version <ver>` | React Native version to create (default: latest stable) |
-| `--icon <file>` | Image for native app icons |
-| `--splash <file>` | Image for splash / BootSplash logo |
+| `--yes`, `-y`, `--default` | Accept defaults; skip prompts |
+| `--rn-version <ver>` | Pin React Native version |
+| `--icon <file>` | Source image for app icons |
+| `--splash <file>` | Source image for splash / BootSplash |
 | `--splash-package <id>` | `bootsplash` \| `splash-screen` \| `native` |
-| `--google-services <file>` | `google-services.json` (Android Firebase) |
-| `--google-service-info <file>` | `GoogleService-Info.plist` (iOS Firebase) |
+| `--google-services <file>` | Android `google-services.json` |
+| `--google-service-info <file>` | iOS `GoogleService-Info.plist` |
 | `--notifications <list>` | `messaging`, `notifee`, or `none` |
-| `--config <file>` | Custom package catalog JSON |
-| `--dry-run` | Resolve and print the plan without writing files |
-| `--help`, `-h` | Show help |
+| `--config <file>` | Custom package catalog |
+| `--dry-run` | Plan only; no create/install |
+| `--help`, `-h` | Help |
 
-Images: `.png`, `.jpg`, `.jpeg`, `.webp` (square sources work best).  
-Firebase configs must keep standard basenames.
+## Interactive CLI walkthrough
 
-## Example
+When you run without `--yes`:
 
-```bash
-# Interactive React Native setup (name → RN version → packages → Firebase → icon → splash)
-npx create-react-native-setup
+1. **Project name**  
+2. **React Native version** (blank = latest stable)  
+3. **Package groups** (Navigation, Animation, Camera, Firebase, …)  
+4. **Notifications** multi-select (if enabled)  
+5. **Firebase** config paths (if Firebase / messaging is in play)  
+6. **App icon?** → path  
+7. **Splash screen?** → package + path + background  
+8. Automatic create → install → native setup → report  
 
-# Fast path with defaults
-npx create-react-native-setup MyApp --yes
+## Screenshots & GIFs
 
-# Pin React Native version
-npx create-react-native-setup MyApp --rn-version 0.81.6
+> Add media under `docs/assets/` after capture.
 
-# Branding + BootSplash without prompts
-npx create-react-native-setup MyApp --yes \
-  --icon ./icon.png \
-  --splash ./splash.png \
-  --splash-package bootsplash
-
-# Firebase + FCM / push notifications
-npx create-react-native-setup MyApp --yes \
-  --notifications messaging,notifee \
-  --google-services ./google-services.json \
-  --google-service-info ./GoogleService-Info.plist
-
-# Preview only
-npx create-react-native-setup MyApp --yes --dry-run
+```text
+docs/assets/cli-walkthrough.gif      # interactive prompts
+docs/assets/report.png               # final report
+docs/assets/android-splash.png       # cold start splash
+docs/assets/app-icon.png             # generated icon
 ```
 
-The scaffolder creates the app in the **current working directory**. After prompts (or flags), installs, native edits, asset generation, and `pod install` (macOS) run automatically.
+<!-- ![CLI walkthrough](docs/assets/cli-walkthrough.gif) -->
+<!-- ![Setup report](docs/assets/report.png) -->
 
-## What the generator does
-
-1. Project name  
-2. React Native version (blank = latest stable)  
-3. Package groups (Navigation, Animation, Camera, Firebase, …)  
-4. Notification multi-select when that group is enabled  
-5. Auto-adds `@react-native-firebase/app` when messaging is selected  
-6. Firebase config paths (blank skips a platform)  
-7. Creates the app via `@react-native-community/cli`  
-8. Resolves compatible package versions  
-9. Installs with the detected package manager  
-10. Applies Babel / entry / permissions / Info.plist / pods  
-11. Firebase + notification wiring + JS bootstrap  
-12. App icon / splash (BootSplash auto-wires `BootTheme` on Android when chosen)  
-13. Prints a report and writes `create-react-native-setup-report.json`
-
-## Generated project structure (typical)
+## Generated folder structure
 
 ```text
 MyApp/
-├── android/                 # Bare React Native Android project
-│   └── app/src/main/...
-├── ios/                     # Bare React Native iOS project
-├── src/                     # Optional generated helpers (e.g. notifications)
-├── App.tsx / App.js
+├── android/          # Bare React Native Android
+├── ios/              # Bare React Native iOS
+├── src/              # Optional helpers (e.g. notifications)
+├── App.tsx
 ├── index.js
 ├── package.json
 ├── babel.config.js
 └── create-react-native-setup-report.json
 ```
 
-Exact folders depend on which groups and branding options you enable.
-
 ## Supported React Native versions
 
-- Targets the **latest stable** React Native by default (`--rn-version` to pin).  
-- Compatible with current Community CLI templates (tested around **0.81.x – 0.86.x**).  
-- Package versions are resolved against the chosen React Native peers—not frozen in the catalog.  
-- Requires **Node.js 18+**.
+- Default: **latest stable** React Native  
+- Pin with `--rn-version` (e.g. `0.81.6`, `0.86.2`)  
+- Validated against recent Community CLI templates (~**0.81–0.86**)  
+- Requires **Node.js 18+**
 
-## Firebase, FCM & push notifications
+## Firebase setup
 
-- Copies `google-services.json` / `GoogleService-Info.plist`  
-- Applies Google Services Gradle plugin and iOS `FirebaseApp.configure()`  
-- Installs messaging and/or Notifee; ensures `POST_NOTIFICATIONS` and iOS background modes  
-- Writes `src/notifications.js` (or `.ts`) and imports it from the entry file  
+See **[docs/Firebase.md](./docs/Firebase.md)**.
 
-**Still manual:** APNs key in Firebase Console, and Push Notifications capability in Xcode.
+Copies `google-services.json` / `GoogleService-Info.plist`, wires Google Services Gradle and iOS `FirebaseApp.configure()`.
 
-## App icon & splash screen
+## Push notifications
 
-- **Icon:** Android mipmaps + iOS `AppIcon.appiconset`  
-- **Splash:** `react-native-bootsplash` (recommended), `react-native-splash-screen`, or native assets only  
-- BootSplash: ensures `BootTheme` (parent `Theme.BootSplash` for v7+), Manifest theme, MainActivity init, AppDelegate storyboard hook, and JS `hide()`
+See **[docs/PushNotifications.md](./docs/PushNotifications.md)**.
 
-## Extending the catalog
+Optional `@react-native-firebase/messaging` (FCM) and/or `@notifee/react-native`, Android `POST_NOTIFICATIONS`, iOS background modes, and a JS bootstrap file.
 
-Use `catalogs/default.json` or `--config`:
+## Splash screen
 
-```json
-{
-  "version": 1,
-  "groups": [
-    {
-      "id": "animation",
-      "label": "Animation & Gestures",
-      "default": true,
-      "packages": ["reanimated"]
-    }
-  ],
-  "packages": [
-    {
-      "id": "reanimated",
-      "label": "React Native Reanimated",
-      "npm": ["react-native-reanimated"],
-      "default": true,
-      "setup": [
-        {
-          "type": "babelPlugin",
-          "plugin": "react-native-reanimated/plugin",
-          "position": "last"
-        }
-      ]
-    }
-  ]
-}
+See **[docs/SplashScreen.md](./docs/SplashScreen.md)**.
+
+- `react-native-bootsplash` (recommended) — auto `BootTheme`, Manifest, MainActivity, AppDelegate  
+- `react-native-splash-screen`  
+- Native assets only  
+
+## App icon generation
+
+See **[docs/Icons.md](./docs/Icons.md)**.
+
+One image → Android launcher densities + iOS `AppIcon.appiconset`.
+
+## Supported platforms
+
+| Platform | Support |
+|----------|---------|
+| Android | Yes (bare RN) |
+| iOS | Yes (macOS for pods / device) |
+| Expo managed | No — use Expo tooling instead |
+| Web | No |
+
+## Requirements
+
+- Node.js **18+**  
+- npm registry access  
+- Android SDK for `run-android` (`ANDROID_HOME`)  
+- macOS + CocoaPods for iOS  
+
+## Examples
+
+```bash
+# React Native starter — interactive
+npx create-react-native-setup
+
+# React Native boilerplate defaults
+npx create-react-native-setup ShopApp --yes
+
+# React Native Firebase + FCM
+npx create-react-native-setup ShopApp --yes \
+  --notifications messaging,notifee \
+  --google-services ./google-services.json \
+  --google-service-info ./GoogleService-Info.plist
+
+# Splash screen + app icon
+npx create-react-native-setup ShopApp --yes \
+  --icon ./brand/icon.png \
+  --splash ./brand/splash.png \
+  --splash-package bootsplash
+
+# Dry-run (CI-friendly)
+npx create-react-native-setup ShopApp --yes --dry-run
 ```
 
-| Setup type | Purpose |
-|------------|---------|
-| `babelPlugin` | Add Babel plugin |
-| `importInEntry` | Add import to `index.js` / `index.tsx` |
-| `androidPermission` | Android permission |
-| `infoPlist` | iOS Info.plist key |
-| `podInstall` | CocoaPods (macOS) |
-| `docs` | Docs URL in report |
-
-## FAQ
-
-**Is this an Expo template?**  
-No. It scaffolds **bare React Native** (Android + iOS) via the React Native Community CLI.
-
-**Does `npm i create-react-native-setup` create my app?**  
-No—that only installs the CLI. Use `npx create-react-native-setup MyApp`.
-
-**Can I use it for Firebase + FCM?**  
-Yes—pass configs and `--notifications messaging` (and/or `notifee`).
-
-**Will BootSplash break Android builds?**  
-This CLI auto-wires `BootTheme` and related native files for BootSplash v7+ when you choose that splash package.
-
-**Which package manager does it use?**  
-It detects npm / yarn / pnpm from the generated project and installs accordingly.
+**Before:** blank Community CLI app + hours of wiring.  
+**After:** report listing installed packages, native steps, and remaining manual actions (e.g. APNs).
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| `SDK location not found` | Set `ANDROID_HOME` or write `android/local.properties` with `sdk.dir=...` |
-| `Unresolved reference BootTheme` | Re-run with `--splash` + `--splash-package bootsplash` on a current release (1.2.5+), or add `BootTheme` to `styles.xml` |
-| `pod install` skipped | Run on macOS: `cd ios && pod install` |
-| npm publish `404` / `401` | `npm login` as a package owner; use `--otp` for 2FA |
-| Generator refuses Node | Upgrade to Node 18+ (RN templates may ask for newer engines) |
+See **[docs/Troubleshooting.md](./docs/Troubleshooting.md)** for Android SDK, BootTheme, pods, and npm auth issues.
 
-## Ranking / discoverability tips (for maintainers)
+## FAQ
 
-Keep shipping frequently, answer issues quickly, add real screenshots, and pin GitHub topics (see repo About). Weekly downloads and README quality matter more to npm search than keyword stuffing alone.
+See **[docs/FAQ.md](./docs/FAQ.md)**.
+
+## Documentation
+
+| Guide | Path |
+|-------|------|
+| Installation | [docs/Installation.md](./docs/Installation.md) |
+| Configuration | [docs/Configuration.md](./docs/Configuration.md) |
+| Examples | [docs/Examples.md](./docs/Examples.md) |
+| Firebase | [docs/Firebase.md](./docs/Firebase.md) |
+| Push notifications | [docs/PushNotifications.md](./docs/PushNotifications.md) |
+| Icons | [docs/Icons.md](./docs/Icons.md) |
+| Splash screen | [docs/SplashScreen.md](./docs/SplashScreen.md) |
+| FAQ | [docs/FAQ.md](./docs/FAQ.md) |
+| Troubleshooting | [docs/Troubleshooting.md](./docs/Troubleshooting.md) |
+| Migration | [docs/Migration.md](./docs/Migration.md) |
 
 ## Contributing
+
+See **[CONTRIBUTING.md](./CONTRIBUTING.md)** and **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)**.
 
 ```bash
 git clone https://github.com/Sainidinesh123/create-react-native-setup.git
 cd create-react-native-setup
 npm install
 npm test
-node bin/create-react-native-setup.js DemoApp --dry-run --yes
 ```
 
-Issues and PRs: https://github.com/Sainidinesh123/create-react-native-setup/issues
+## Roadmap
 
-## Links
+- [ ] First-class TypeScript template flags docs  
+- [ ] Demo GIF + social preview assets in-repo  
+- [ ] Optional CI workflow badge for GitHub Actions  
+- [ ] Gallery of generated report screenshots  
+- [ ] More catalog groups requested by the community  
 
-- npm: https://www.npmjs.com/package/create-react-native-setup  
-- GitHub: https://github.com/Sainidinesh123/create-react-native-setup  
-- Changelog: [CHANGELOG.md](./CHANGELOG.md)
+Security reports: **[SECURITY.md](./SECURITY.md)** · Support: **[SUPPORT.md](./SUPPORT.md)**
 
 ## License
 
-MIT © [Sainidinesh123](https://github.com/Sainidinesh123)
+[MIT](./LICENSE) © [Sainidinesh123](https://github.com/Sainidinesh123)
+
+---
+
+**npm:** https://www.npmjs.com/package/create-react-native-setup  
+**Changelog:** [CHANGELOG.md](./CHANGELOG.md)

@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://github.com/Sainidinesh123/create-react-native-setup#readme
+    about: Read the README and docs/ guides before opening an issue
+  - name: Troubleshooting
+    url: https://github.com/Sainidinesh123/create-react-native-setup/blob/main/docs/Troubleshooting.md
+    about: Common CLI, Android, iOS, and Firebase setup failures
+  - name: Security
+    url: https://github.com/Sainidinesh123/create-react-native-setup/blob/main/SECURITY.md
+    about: Report a vulnerability privately

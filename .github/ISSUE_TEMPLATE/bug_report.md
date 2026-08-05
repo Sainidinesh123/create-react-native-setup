@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Report a problem with create-react-native-setup
+description: Report a problem with create-react-native-setup
 title: "[Bug] "
-labels: bug
+labels: ["bug"]
 ---
 
 ## Describe the bug
@@ -23,13 +23,23 @@ npx create-react-native-setup ...
 
 What you expected to happen.
 
+## Actual behavior
+
+What actually happened.
+
 ## Environment
 
-- create-react-native-setup version:
-- Node.js version:
-- OS:
-- React Native version (if project was created):
+- **create-react-native-setup** version:
+- **Node.js** version:
+- **npm** / yarn / pnpm:
+- **OS** (and version):
+- **React Native** version (if project was created):
+- **Command** used:
 
 ## Logs / report
 
 Paste relevant CLI output or attach `create-react-native-setup-report.json` if available.
+
+## Screenshots
+
+If applicable, add screenshots.
