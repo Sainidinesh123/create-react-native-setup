@@ -1,7 +1,7 @@
 {
   "name": "create-react-native-setup",
-  "version": "1.2.5",
-  "description": "React Native CLI project generator and starter — scaffold a bare RN app with compatible packages, Firebase setup, push notifications, app icon, and splash screen",
+  "version": "1.2.6",
+  "description": "React Native CLI project generator — scaffold bare RN apps with Firebase, FCM push, app icons, splash screens & compatible packages",
   "type": "module",
   "bin": {
     "create-react-native-setup": "bin/create-react-native-setup.js"
@@ -15,7 +15,8 @@
     "src",
     "catalogs",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "start": "node ./bin/create-react-native-setup.js",
@@ -28,17 +29,31 @@
   "keywords": [
     "react-native",
     "react-native-cli",
-    "react-native-setup",
+    "react-native-template",
     "react-native-starter",
+    "react-native-boilerplate",
+    "react-native-setup",
+    "bare-react-native",
     "project-generator",
+    "starter-kit",
     "scaffold",
+    "bootstrap",
+    "cli",
     "npx",
+    "android",
+    "ios",
     "firebase",
+    "fcm",
     "push-notifications",
     "app-icon",
     "splash-screen",
+    "react-native-bootsplash",
     "create-react-native-setup"
   ],
+  "author": {
+    "name": "Sainidinesh123",
+    "url": "https://github.com/Sainidinesh123"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
