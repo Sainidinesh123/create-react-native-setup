@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-12
+
+### Changed & Dependencies
+
+- Bumped package version to `1.3.0` for npm distribution.
+- Upgraded `sharp` dependency to `^0.35.4`.
+
 ### Documentation
 
 - Expanded README (SEO, TOC, comparison, placeholders for screenshots/GIFs)
@@ -37,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 Firebase, notifications, branding, catalog resolution, and related fixes. See git history for granular commits.
 
-[Unreleased]: https://github.com/Sainidinesh123/create-react-native-setup/compare/v1.2.6...HEAD
+[Unreleased]: https://github.com/Sainidinesh123/create-react-native-setup/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Sainidinesh123/create-react-native-setup/releases/tag/v1.3.0
 [1.2.6]: https://github.com/Sainidinesh123/create-react-native-setup/releases/tag/v1.2.6
 [1.2.5]: https://github.com/Sainidinesh123/create-react-native-setup/releases/tag/v1.2.5
 [1.2.4]: https://github.com/Sainidinesh123/create-react-native-setup/releases/tag/v1.2.4
